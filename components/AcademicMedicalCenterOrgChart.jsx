@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { ChevronDown, ChevronRight, Users, GraduationCap, Stethoscope, Building2, Heart, ClipboardList, BookOpen, Shield, TrendingUp } from "lucide-react";
+import { ChevronDown, ChevronRight, Users, GraduationCap, Stethoscope, Building2, Heart, ClipboardList, BookOpen, Shield, TrendingUp, Scale, Briefcase } from "lucide-react";
 
 // Color palette for different organizational domains
 const COLORS = {
@@ -29,6 +29,7 @@ const orgData = {
       subtitle: "Health System",
       color: "executive",
       children: [
+        // ── CMO ──────────────────────────────────────────────
         {
           id: "cmo",
           title: "Chief Medical Officer (CMO)",
@@ -52,12 +53,34 @@ const orgData = {
                 { id: "infection", title: "Infection Prevention", subtitle: "Surveillance, outbreak response", color: "support", children: [] },
               ],
             },
+            {
+              id: "ethics",
+              title: "Ethics Committee / Bioethics Consultation",
+              subtitle: "Clinical ethics consults, policy guidance, end-of-life issues (TJC requirement)",
+              color: "support",
+              children: [],
+            },
+            {
+              id: "risk-mgmt",
+              title: "Risk Management",
+              subtitle: "Incident reporting, sentinel events, root cause analysis, claims management",
+              color: "support",
+              children: [],
+            },
+            {
+              id: "pharmacy-leader",
+              title: "Chief Pharmacy Officer / Director of Pharmacy",
+              subtitle: "Formulary management, medication safety, 340B program, clinical pharmacy services",
+              color: "clinical",
+              children: [],
+            },
           ],
         },
+        // ── COO ──────────────────────────────────────────────
         {
           id: "coo",
           title: "Chief Operating Officer (COO)",
-          subtitle: "Day-to-day hospital operations",
+          subtitle: "Day-to-day hospital and clinic operations",
           color: "executive",
           children: [
             {
@@ -70,8 +93,57 @@ const orgData = {
             {
               id: "ancillary",
               title: "VP, Ancillary Services",
-              subtitle: "Lab, pharmacy, radiology, respiratory therapy",
+              subtitle: "Lab, radiology, respiratory therapy",
               color: "clinical",
+              children: [],
+            },
+            {
+              id: "ambulatory",
+              title: "VP, Ambulatory / Outpatient Services",
+              subtitle: "Clinic operations, urgent care, satellite sites, ambulatory surgery centers",
+              color: "clinical",
+              children: [],
+            },
+            {
+              id: "ed-ops",
+              title: "VP, Emergency Services",
+              subtitle: "ED operations, EMS partnerships, observation unit, throughput",
+              color: "clinical",
+              children: [],
+            },
+            {
+              id: "service-lines",
+              title: "Service Line Administrators",
+              subtitle: "Heart & vascular, oncology, neuro, ortho (P&L ownership)",
+              color: "clinical",
+              children: [],
+            },
+            {
+              id: "transfer-center",
+              title: "Transfer Center / Patient Access",
+              subtitle: "Referral capture, bed placement, capacity management",
+              color: "support",
+              children: [],
+            },
+            {
+              id: "case-mgmt",
+              title: "Case Management / Social Work / Utilization Review",
+              subtitle: "Length of stay, discharge planning, payer authorization, social determinants",
+              color: "support",
+              children: [],
+            },
+            {
+              id: "supply-chain",
+              title: "Supply Chain & Procurement",
+              subtitle: "Materials management, GPO relationships, value analysis, distribution",
+              color: "support",
+              children: [],
+            },
+            {
+              id: "patient-experience",
+              title: "Patient Experience / Patient Relations",
+              subtitle: "HCAHPS, grievance resolution, ombudsman, service recovery",
+              color: "support",
               children: [],
             },
             {
@@ -81,15 +153,9 @@ const orgData = {
               color: "support",
               children: [],
             },
-            {
-              id: "it",
-              title: "Chief Information Officer (CIO)",
-              subtitle: "EHR (Epic/Cerner), health informatics, cybersecurity",
-              color: "support",
-              children: [],
-            },
           ],
         },
+        // ── CFO ──────────────────────────────────────────────
         {
           id: "cfo",
           title: "Chief Financial Officer (CFO)",
@@ -98,21 +164,21 @@ const orgData = {
           children: [
             { id: "revenue", title: "Revenue Cycle Management", subtitle: "Coding, billing, collections, denials", color: "support", children: [] },
             { id: "finance", title: "Financial Planning & Analysis", subtitle: "Budgeting, forecasting, capital planning", color: "support", children: [] },
+            { id: "managed-care", title: "VP, Managed Care & Payer Strategy", subtitle: "Contract negotiation, rate modeling, payer mix optimization", color: "support", children: [] },
           ],
         },
+        // ── CIO ──────────────────────────────────────────────
         {
-          id: "cro",
-          title: "Chief Revenue Officer (CRO)",
-          subtitle: "Payer strategy, service line growth, physician enterprise",
+          id: "cio",
+          title: "Chief Information Officer (CIO)",
+          subtitle: "EHR (Epic/Cerner), health informatics, cybersecurity, digital transformation",
           color: "executive",
           children: [
-            { id: "managed-care", title: "VP, Managed Care & Payer Strategy", subtitle: "Contract negotiation, rate modeling, payer mix optimization", color: "support", children: [] },
-            { id: "service-lines", title: "Service Line Administrators", subtitle: "Heart & vascular, oncology, neuro, ortho (P&L ownership)", color: "clinical", children: [] },
-            { id: "physician-enterprise", title: "VP, Physician Enterprise / Faculty Practice Plan", subtitle: "Employed physician network, clinic ops, wRVU targets, comp plans", color: "clinical", children: [] },
-            { id: "business-dev", title: "Business Development & Strategic Planning", subtitle: "Market analysis, new program launches, outreach site expansion", color: "support", children: [] },
-            { id: "transfer-center", title: "Transfer Center / Patient Access", subtitle: "Referral capture, bed placement, capacity management", color: "support", children: [] },
+            { id: "clinical-informatics", title: "Clinical Informatics", subtitle: "CPOE optimization, clinical decision support, interoperability", color: "support", children: [] },
+            { id: "it-infrastructure", title: "IT Infrastructure & Cybersecurity", subtitle: "Network, data centers, HIPAA security, disaster recovery", color: "support", children: [] },
           ],
         },
+        // ── CNO ──────────────────────────────────────────────
         {
           id: "cno",
           title: "Chief Nursing Officer (CNO)",
@@ -169,6 +235,13 @@ const orgData = {
               children: [],
             },
             {
+              id: "house-supervisors",
+              title: "House Supervisors / Nursing Supervisors",
+              subtitle: "24/7 administrative coverage, bed flow, staffing escalations, code response",
+              color: "nursing",
+              children: [],
+            },
+            {
               id: "nurse-ed",
               title: "Director of Nursing Education",
               subtitle: "Onboarding, competencies, nurse residency programs",
@@ -179,24 +252,88 @@ const orgData = {
               ],
             },
             {
+              id: "nurse-informatics",
+              title: "Nurse Informaticists",
+              subtitle: "EHR optimization, clinical workflow design, nursing documentation standards",
+              color: "nursing",
+              children: [],
+            },
+            {
               id: "apn-dir",
-              title: "Director of Advanced Practice",
-              subtitle: "NPs, CRNAs, CNMs, CNSs",
+              title: "Director of Advanced Practice Providers",
+              subtitle: "NPs, CRNAs, CNMs, CNSs — may also coordinate PA practice depending on institution",
               color: "nursing",
               children: [
                 { id: "nps", title: "Nurse Practitioners (NPs)", subtitle: "Diagnose, prescribe, manage panels (varies by state autonomy)", color: "nursing", children: [] },
                 { id: "crnas", title: "CRNAs", subtitle: "Anesthesia delivery in OR and procedural areas", color: "nursing", children: [] },
-                { id: "pas", title: "Physician Assistants (PAs)", subtitle: "Often report here or under department chairs", color: "nursing", children: [] },
+                { id: "pas", title: "Physician Assistants (PAs)", subtitle: "Often dual-report: APP office for credentialing, department chair for clinical supervision", color: "clinical", children: [] },
               ],
             },
           ],
         },
+        // ── CHRO ─────────────────────────────────────────────
+        {
+          id: "chro",
+          title: "Chief Human Resources Officer (CHRO)",
+          subtitle: "Workforce planning, labor relations, benefits, employee health",
+          color: "executive",
+          children: [
+            { id: "talent", title: "Talent Acquisition & Workforce Development", subtitle: "Recruitment, retention, succession planning, training", color: "support", children: [] },
+            { id: "labor-relations", title: "Labor Relations", subtitle: "Union negotiations, grievance processes, contract administration", color: "support", children: [] },
+            { id: "employee-health", title: "Employee Health & Wellness", subtitle: "Occupational health, employee assistance, vaccination programs", color: "support", children: [] },
+          ],
+        },
+        // ── General Counsel ──────────────────────────────────
+        {
+          id: "legal",
+          title: "General Counsel / Legal Affairs",
+          subtitle: "Contracts, litigation, malpractice, regulatory affairs",
+          color: "executive",
+          children: [],
+        },
+        // ── Chief Compliance Officer ─────────────────────────
+        {
+          id: "compliance",
+          title: "Chief Compliance Officer",
+          subtitle: "HIPAA, Stark Law, Anti-kickback, billing compliance, corporate integrity program",
+          color: "executive",
+          children: [],
+        },
+        // ── VP Marketing ─────────────────────────────────────
+        {
+          id: "marketing",
+          title: "VP, Marketing & Communications",
+          subtitle: "Brand strategy, public relations, physician referral marketing, digital/web",
+          color: "support",
+          children: [],
+        },
+        // ── VP Government Relations ──────────────────────────
+        {
+          id: "gov-relations",
+          title: "VP, Government & Community Relations",
+          subtitle: "Legislative affairs, lobbying, community benefit, public affairs",
+          color: "support",
+          children: [],
+        },
+        // ── Dean ─────────────────────────────────────────────
         {
           id: "dean",
           title: "Dean, School of Medicine",
-          subtitle: "Academic mission: education, research, faculty affairs",
+          subtitle: "Academic mission: education, research, faculty affairs. Dual reports from department chairs.",
           color: "academic",
           children: [
+            // Faculty Practice Plan
+            {
+              id: "practice-plan",
+              title: "Faculty Practice Plan / Physician Group",
+              subtitle: "Clinical revenue arm of academic enterprise (e.g., Duke PDC, UCSF Medical Group). wRVU targets, comp plans",
+              color: "clinical",
+              children: [
+                { id: "practice-ops", title: "Practice Plan Operations", subtitle: "Employed physician network, clinic ops, scheduling, referral management", color: "support", children: [] },
+                { id: "practice-finance", title: "Practice Plan Finance", subtitle: "Physician compensation modeling, collections, payer enrollment", color: "support", children: [] },
+              ],
+            },
+            // UME
             {
               id: "ume",
               title: "Associate Dean, Undergraduate Medical Education (UME)",
@@ -240,6 +377,31 @@ const orgData = {
                 },
               ],
             },
+            // Student Affairs
+            {
+              id: "student-affairs",
+              title: "Associate Dean for Student Affairs",
+              subtitle: "Student wellness, professionalism, disability services, career advising, leave of absence",
+              color: "student",
+              children: [],
+            },
+            // Admissions
+            {
+              id: "admissions",
+              title: "Associate Dean for Admissions",
+              subtitle: "MD admissions committee, holistic review, diversity pipeline programs, interview process",
+              color: "student",
+              children: [],
+            },
+            // DEI
+            {
+              id: "dei",
+              title: "Associate Dean for Diversity, Equity & Inclusion",
+              subtitle: "Faculty/student diversity, climate initiatives, bias training, pipeline programs",
+              color: "academic",
+              children: [],
+            },
+            // GME
             {
               id: "gme",
               title: "Associate Dean for GME / Designated Institutional Official (DIO)",
@@ -367,15 +529,20 @@ const orgData = {
                     { id: "neuro", title: "Neurology (4 yr residency)", subtitle: "Fellowships: stroke, epilepsy, movement disorders, neuromuscular", color: "program", children: [] },
                     { id: "ortho", title: "Orthopedic Surgery (5 yr residency)", subtitle: "Fellowships: sports, spine, hand, trauma, joints", color: "program", children: [] },
                     { id: "uro", title: "Urology (6 yr integrated)", subtitle: "Fellowships: uro-onc, female pelvic, endourology", color: "program", children: [] },
+                    { id: "neurosurg", title: "Neurosurgery (7 yr residency)", subtitle: "Fellowships: spine, pediatric, cerebrovascular, skull base, functional", color: "program", children: [] },
+                    { id: "ophtho", title: "Ophthalmology (4 yr: 1 intern + 3)", subtitle: "Fellowships: retina, glaucoma, cornea, oculoplastics, pediatric", color: "program", children: [] },
+                    { id: "plastics", title: "Plastic Surgery (6 yr integrated or 3 yr independent)", subtitle: "Fellowships: hand, craniofacial, microsurgery", color: "program", children: [] },
                     { id: "derm", title: "Dermatology (4 yr: 1 intern + 3)", subtitle: "Small programs, dermatopathology fellowship", color: "program", children: [] },
                     { id: "ent", title: "Otolaryngology / ENT (5 yr residency)", subtitle: "Fellowships: head & neck onc, pediatric, rhinology", color: "program", children: [] },
                     { id: "fm", title: "Family Medicine (3 yr residency)", subtitle: "Sports medicine, hospice, geriatrics fellowships", color: "program", children: [] },
                     { id: "pm-r", title: "PM&R / Physical Medicine (4 yr residency)", subtitle: "Fellowships: pain, SCI, brain injury, sports", color: "program", children: [] },
                     { id: "radonc", title: "Radiation Oncology (5 yr integrated)", subtitle: "Small programs, physics track available", color: "program", children: [] },
+                    { id: "transitional", title: "Transitional Year / Preliminary Programs", subtitle: "1-year programs feeding into PGY-2 advanced positions (derm, ophtho, radiology, etc.)", color: "program", children: [] },
                   ],
                 },
               ],
             },
+            // Research
             {
               id: "research-dean",
               title: "Associate Dean for Research",
@@ -383,10 +550,13 @@ const orgData = {
               color: "research",
               children: [
                 { id: "irb", title: "Institutional Review Board (IRB)", subtitle: "Human subjects protections, protocol review", color: "support", children: [] },
+                { id: "clinical-trials", title: "Clinical Trials Office", subtitle: "Trial logistics, budgets, enrollment management, industry sponsor relations", color: "research", children: [] },
                 { id: "research-admin", title: "Office of Sponsored Programs", subtitle: "Grant submissions, budgets, compliance, post-award", color: "support", children: [] },
                 { id: "core-labs", title: "Core Research Laboratories", subtitle: "Genomics, proteomics, biostatistics, animal facility", color: "research", children: [] },
+                { id: "tech-transfer", title: "Technology Transfer / Innovation Office", subtitle: "Intellectual property, patents, licensing, startup support", color: "research", children: [] },
               ],
             },
+            // Faculty Affairs
             {
               id: "faculty-dean",
               title: "Associate Dean for Faculty Affairs",
@@ -396,10 +566,19 @@ const orgData = {
                 { id: "faculty-dev", title: "Office of Faculty Development", subtitle: "Teaching awards, mentoring programs, leadership tracks", color: "academic", children: [] },
               ],
             },
+            // CME
+            {
+              id: "cme-dean",
+              title: "Associate Dean for Continuing Medical Education (CME)",
+              subtitle: "ACCME accreditation, CME programming, MOC support for practicing physicians",
+              color: "academic",
+              children: [],
+            },
+            // Department Chairs
             {
               id: "dept-chairs",
               title: "Department Chairs",
-              subtitle: "Each chair runs their clinical & academic department",
+              subtitle: "Each chair runs their clinical & academic department (dual report to Dean + CEO/health system)",
               color: "department",
               children: [
                 {
@@ -596,14 +775,16 @@ export default function AcademicMedicalCenterOrgChart() {
 
   const quickLinks = [
     { label: "Executive Suite", icon: Building2, nodeId: "ceo" },
-    { label: "Revenue & Growth", icon: TrendingUp, nodeId: "cro" },
+    { label: "Clinical Ops (COO)", icon: Briefcase, nodeId: "coo" },
     { label: "Nursing Hierarchy", icon: Heart, nodeId: "cno" },
+    { label: "Dean & Academics", icon: GraduationCap, nodeId: "dean" },
     { label: "GME & Residencies", icon: Stethoscope, nodeId: "gme" },
-    { label: "Medical Students", icon: GraduationCap, nodeId: "ume" },
+    { label: "Medical Students", icon: BookOpen, nodeId: "ume" },
     { label: "Internal Medicine", icon: ClipboardList, nodeId: "im-residency" },
     { label: "Surgery", icon: Shield, nodeId: "surgery-dept" },
-    { label: "Research", icon: BookOpen, nodeId: "research-dean" },
+    { label: "Research", icon: TrendingUp, nodeId: "research-dean" },
     { label: "All Departments", icon: Users, nodeId: "other-depts" },
+    { label: "Practice Plan", icon: Scale, nodeId: "practice-plan" },
   ];
 
   return (
@@ -697,7 +878,7 @@ export default function AcademicMedicalCenterOrgChart() {
       </div>
 
       <div style={{ marginTop: 20, padding: 16, backgroundColor: "#f8fafc", borderRadius: 8, fontSize: 13, color: "#475569", lineHeight: "20px" }}>
-        <strong style={{ color: "#1e293b" }}>How to read this chart:</strong> The structure represents a composite of how large academic medical centers (think Duke, UCSF, Hopkins, Michigan) organize themselves. Real institutions vary, but the reporting lines and role layers are consistent. Every residency and fellowship program has its own Program Director, Associate Program Directors, and at least one Program Coordinator handling ACGME compliance, scheduling, evaluations, and trainee support. Department Chairs typically report to both the Dean (academic) and the health system CEO (clinical revenue), creating a matrix structure that is the defining feature of academic medicine.
+        <strong style={{ color: "#1e293b" }}>How to read this chart:</strong> The structure represents a composite of how large academic medical centers (think Duke, UCSF, Hopkins, Michigan) organize themselves. Real institutions vary, but the reporting lines and role layers are consistent. The CEO leads the health system while the Dean leads the academic enterprise — department chairs dual-report to both, creating the matrix structure that defines academic medicine. The faculty practice plan (physician group) sits under the Dean as the clinical revenue arm of the academic mission. Every residency and fellowship program has its own Program Director, Associate Program Directors, and at least one Program Coordinator handling ACGME compliance, scheduling, evaluations, and trainee support.
       </div>
     </div>
   );
